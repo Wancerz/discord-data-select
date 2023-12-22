@@ -111,7 +111,7 @@ class MyBot(commands.Bot):
 
 async def main():
     bot = MyBot(command_prefix="!")
-    await bot.start('MTE4NzEwOTMxMDE3MDM5ODg1Mg.GYaZVy.w_fglKspD2EDlwaTR4h6t8EymzPPVrNbPBpNGs')
+    await bot.start('')
 
 if __name__ == "__main__":
     asyncio.run(main())
