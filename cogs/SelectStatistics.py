@@ -2,19 +2,19 @@
 import discord
 from discord.ext import commands, tasks
 import json
+from datetime import datetime, timedelta
+
 #server id 
 #218510314835148802
 
-class SelectStatiscs(commands.Cog):
+class SelectStatistic(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot 
-
+        self.bot = bot
+        self.guild_id = 218510314835148802 
 
     #returns count of active users at server 
     def SelectMembersCount(self):
-        print("AAA")
-        
-        guild_id = 218510314835148802
+        guild_id = self.guild_id
         server_instance = self.bot.get_guild(guild_id)
 
         if server_instance:
@@ -25,15 +25,23 @@ class SelectStatiscs(commands.Cog):
                 if str(channel.type) == "voice":
                     active_members = active_members + len(channel.members)
 
-        print(active_members)
         return active_members
 
-    @commands.command(name='active_members')
-    async def active_members(self,ctx):
-        active_members = self.SelectMembersCount()
+    #returns sum of messages of today 
+    async def SelectMessageCount(self):
+        guild_id = self.guild_id
+        server_instance = self.bot.get_guild(guild_id)
+        message_counter = 0
+        today = today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=1)
+               
+        if server_instance:
+            channels = server_instance.text_channels
+            for channel in channels:
 
-
-        await ctx.send(f"liczba aktywnych uzytkownikow: {active_members}")
+                async for message in channel.history(limit=200, after=today):
+                    message_counter += 1
+        
+        return message_counter
 
     #loop saves collected server data to a json file at server
     @tasks.loop(seconds=60)
@@ -52,26 +60,13 @@ class SelectStatiscs(commands.Cog):
 
 
 
-
-    @commands.command(name='test1')
-    async def test1(self,ctx):
-
-
-        await ctx.send("AAA")
-
-
-
-
     @commands.command(name='test')
     async def test(self,ctx):
         print("AAA")
         #server_id = ctx.guild.id
-        
         guild_id = 218510314835148802
         server_instance = self.bot.get_guild(guild_id)
         # print(server_instance)
-
-
         if server_instance:
 
             #Get channels and append to "self.active_members" count of active members at channels 
@@ -82,11 +77,7 @@ class SelectStatiscs(commands.Cog):
                 if str(channel.type) == "voice":
                     self.active_members = self.active_members + len(channel.members)
 
-
-
-            # for channel in channels:
-            #     print(f"Channel Name: {channel.name}, Channel ID: {channel.id}, Channel Type: {channel.type}")
-            
+          
         # print(self.voice_channles_id)
         print(self.active_members)
 
@@ -94,21 +85,17 @@ class SelectStatiscs(commands.Cog):
         # print(guild_id)
         await ctx.send(f"AAA {guild_id}")
 
+
+
     @commands.command()
     async def ping(self,ctx):
         await ctx.send("Pong")
 
     @commands.Cog.listener()
     async def on_ready(self):
-        #print(f'Logged in as {user.name} ({user.id})')
-        # self.background_tasks = BackgroundTasks(self)
         print("logged")
-        self.JsonExport.start()
-
-
-
-
+        # self.JsonExport.start()
 
 
 async def setup(bot):
-    await bot.add_cog(SelectStatiscs(bot))
+    await bot.add_cog(SelectStatistic(bot))
