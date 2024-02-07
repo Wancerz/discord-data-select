@@ -42,6 +42,27 @@ class SelectStatistic(commands.Cog):
                     message_counter += 1
         
         return message_counter
+    
+    #returns ids of active members
+    async def SelectMemebersID(self):
+        guild_id = self.guild_id
+        server_instance = self.bot.get_guild(guild_id)
+        members_id = []
+
+        if server_instance:
+            channels = server_instance.voice_channels
+            for channel in channels:
+                #check channel is not empty
+                if channel.members:
+                    for member in channel.members:
+                        members_id.append(member.id)
+                        # print(member.id)
+        
+        #delete duplicated ids
+        unique_members_id = set(members_id)
+
+        return unique_members_id
+
 
     #loop saves collected server data to a json file at server
     @tasks.loop(seconds=60)
