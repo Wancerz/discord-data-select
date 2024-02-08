@@ -13,7 +13,7 @@ class SelectStatistic(commands.Cog):
         self.guild_id = 218510314835148802 
 
     #returns count of active users at server 
-    def SelectMembersCount(self):
+    def select_members_count(self):
         guild_id = self.guild_id
         server_instance = self.bot.get_guild(guild_id)
 
@@ -28,7 +28,7 @@ class SelectStatistic(commands.Cog):
         return active_members
 
     #returns sum of messages of today 
-    async def SelectMessageCount(self):
+    async def select_message_count(self):
         guild_id = self.guild_id
         server_instance = self.bot.get_guild(guild_id)
         message_counter = 0
@@ -44,7 +44,8 @@ class SelectStatistic(commands.Cog):
         return message_counter
     
     #returns ids of active members
-    async def SelectMemebersID(self):
+    async def select_members_id(self):
+        
         guild_id = self.guild_id
         server_instance = self.bot.get_guild(guild_id)
         members_id = []
@@ -62,6 +63,32 @@ class SelectStatistic(commands.Cog):
         unique_members_id = set(members_id)
 
         return unique_members_id
+
+
+    #returns info about active members
+    async def select_members_info(self):   
+        guild_id = self.guild_id
+        server_instance = self.bot.get_guild(guild_id)
+        members_info = {}
+
+        if server_instance:
+            members_id = await self.select_members_id()
+
+            for member_id in members_id:
+                try:
+                    member = server_instance.get_member(member_id) 
+
+                    members_info[member_id] = {'name':member.name,'display_name':member.display_name,'created_at':member.created_at,'roles':member.roles,'status':member.status,'activity':member.activity}
+                    # print(members_info,"\n\n")                        
+                except:
+                    continue
+            # print(members_info)
+        return members_info
+
+
+
+
+
 
 
     #loop saves collected server data to a json file at server
