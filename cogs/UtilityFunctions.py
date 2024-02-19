@@ -15,12 +15,19 @@ class EditView(commands.Cog):
     @staticmethod
     async def parser_members_info(bot,guild_id):
         
+        embed = discord.Embed(
+            colour=discord.Colour.dark_blue(),
+            description="Basic informations about active members",
+            title="Members Info",
+
+        )
+        # embed.set_footer(text="NagiosXI-analysis")
+        embed.set_author(name="NagiosXI-analysis")
         members_info =  await SelectStatistic.select_members_info(bot,guild_id)
               
         if not members_info:
             return False
         
-        result = "####################\n"
         for member_id, member_data in members_info.items():
             member_name = member_data['name']
             member_display_name = member_data['display_name']
@@ -29,9 +36,16 @@ class EditView(commands.Cog):
             member_status = member_data['status']
             member_activity = member_data['activity']
 
-            result += f"Nazwa uzytkownika: {member_name} \nWyswietlana nazwa: {member_display_name} \nData utworzenia konta: {member_created_at} \nStatus: {member_status} \nAktywnosci: {member_activity}"
-            result += "\n###################\n"
-        return result
+            embed.add_field(
+                name=f"**{member_name}**",
+                inline=False,
+                value =(f"**Nazwa uzytkownika**: {member_name} \n"
+                        f"**Wyswietlana nazwa**: {member_display_name} \n"
+                        f"**Data utworzenia konta**: {member_created_at} \n"
+                        f"**Status**: {member_status} \n"
+                        f"**Aktywnosci**: {member_activity}"))
+            
+        return embed
 
 
     # @commands.Cog.listener()
