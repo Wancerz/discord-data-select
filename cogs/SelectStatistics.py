@@ -11,11 +11,7 @@ class SelectStatistic(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.guild_id = 218510314835148802 
-
-    @staticmethod 
-    async def testtest():
-        print("STATYCZNA FUNKCJA")
-       
+   
     #returns count of active users at server
     @staticmethod 
     async def select_members_count(bot,guild_id):
@@ -34,7 +30,6 @@ class SelectStatistic(commands.Cog):
     #returns sum of messages of today 
     @staticmethod 
     async def select_message_count(bot,guild_id):
-        
         server_instance = bot.get_guild(guild_id)
         today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=1)
         message_counter = 0 
@@ -42,10 +37,10 @@ class SelectStatistic(commands.Cog):
         if server_instance: 
             channels = server_instance.text_channels
             for channel in channels:
-
+                
                 async for message in channel.history(limit=200, after=today):
                     message_counter += 1
-        
+
         return message_counter
     
     #returns ids of active members
@@ -68,7 +63,6 @@ class SelectStatistic(commands.Cog):
         unique_members_id = set(members_id)
 
         return unique_members_id
-
 
     #returns info about active members
     @staticmethod 
@@ -103,33 +97,6 @@ class SelectStatistic(commands.Cog):
 
         print("JSON file written")
 
-
-
-    @commands.command(name='test')
-    async def test(self,ctx):
-        #server_id = ctx.guild.id
-        guild_id = 218510314835148802
-        server_instance = self.bot.get_guild(guild_id)
-        if server_instance:
-
-            #Get channels and append to "self.active_members" count of active members at channels 
-            channels = server_instance.channels
-            self.active_members = 0
-
-            for channel in channels:
-                if str(channel.type) == "voice":
-                    self.active_members = self.active_members + len(channel.members)
-
-          
-        # print(self.voice_channles_id)
-        print(self.active_members)
-
-
-        # print(guild_id)
-        await ctx.send(f"AAA {guild_id}")
-
-
-
     @commands.command()
     async def ping(self,ctx):
         await ctx.send("Pong")
@@ -139,7 +106,6 @@ class SelectStatistic(commands.Cog):
         print("logged")
         
         # self.JsonExport.start()
-
 
 async def setup(bot):
     await bot.add_cog(SelectStatistic(bot))
