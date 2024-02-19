@@ -12,11 +12,15 @@ class SelectStatistic(commands.Cog):
         self.bot = bot
         self.guild_id = 218510314835148802 
 
-    #returns count of active users at server 
-    def select_members_count(self):
-        guild_id = self.guild_id
-        server_instance = self.bot.get_guild(guild_id)
-
+    @staticmethod 
+    async def testtest():
+        print("STATYCZNA FUNKCJA")
+       
+    #returns count of active users at server
+    @staticmethod 
+    async def select_members_count(bot,guild_id):
+        
+        server_instance = bot.get_guild(guild_id)
         if server_instance:
             #Get channels and append to "self.active_members" count of active members at channels 
             channels = server_instance.channels
@@ -28,13 +32,14 @@ class SelectStatistic(commands.Cog):
         return active_members
 
     #returns sum of messages of today 
-    async def select_message_count(self):
-        guild_id = self.guild_id
-        server_instance = self.bot.get_guild(guild_id)
-        message_counter = 0
-        today = today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=1)
-               
-        if server_instance:
+    @staticmethod 
+    async def select_message_count(bot,guild_id):
+        
+        server_instance = bot.get_guild(guild_id)
+        today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=1)
+        message_counter = 0 
+
+        if server_instance: 
             channels = server_instance.text_channels
             for channel in channels:
 
@@ -44,12 +49,12 @@ class SelectStatistic(commands.Cog):
         return message_counter
     
     #returns ids of active members
-    async def select_members_id(self):
+    @staticmethod 
+    async def select_members_id(bot,guild_id):
         
-        guild_id = self.guild_id
-        server_instance = self.bot.get_guild(guild_id)
+        server_instance = bot.get_guild(guild_id)
         members_id = []
-
+        
         if server_instance:
             channels = server_instance.voice_channels
             for channel in channels:
@@ -66,29 +71,21 @@ class SelectStatistic(commands.Cog):
 
 
     #returns info about active members
-    async def select_members_info(self):   
-        guild_id = self.guild_id
-        server_instance = self.bot.get_guild(guild_id)
+    @staticmethod 
+    async def select_members_info(bot,guild_id): 
+        server_instance = bot.get_guild(guild_id)
+
         members_info = {}
-
         if server_instance:
-            members_id = await self.select_members_id()
-
+            members_id = await SelectStatistic.select_members_id(bot,guild_id)
             for member_id in members_id:
                 try:
                     member = server_instance.get_member(member_id) 
 
-                    members_info[member_id] = {'name':member.name,'display_name':member.display_name,'created_at':member.created_at,'roles':member.roles,'status':member.status,'activity':member.activity}
-                    # print(members_info,"\n\n")                        
+                    members_info[member_id] = {'name':member.name,'display_name':member.display_name,'created_at':member.created_at,'roles':member.roles,'status':member.status,'activity':member.activity}                       
                 except:
                     continue
-            # print(members_info)
         return members_info
-
-
-
-
-
 
 
     #loop saves collected server data to a json file at server
@@ -110,11 +107,9 @@ class SelectStatistic(commands.Cog):
 
     @commands.command(name='test')
     async def test(self,ctx):
-        print("AAA")
         #server_id = ctx.guild.id
         guild_id = 218510314835148802
         server_instance = self.bot.get_guild(guild_id)
-        # print(server_instance)
         if server_instance:
 
             #Get channels and append to "self.active_members" count of active members at channels 
@@ -142,6 +137,7 @@ class SelectStatistic(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print("logged")
+        
         # self.JsonExport.start()
 
 
