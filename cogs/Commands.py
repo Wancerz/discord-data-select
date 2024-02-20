@@ -1,15 +1,15 @@
 from discord.ext import commands
 from cogs.SelectStatistics import SelectStatistic
-from cogs.UtilityFunctions import EditView
+from cogs.UtilityFunctions import EditView, FileOperations
 from discord import app_commands
 import discord
-
+import os
 
 
 class Commands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.guild_id = 218510314835148802 
+        self.guild_id = FileOperations.select_guild_id()
 
     #return count of messages
     @commands.command(name='message_count')

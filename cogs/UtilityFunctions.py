@@ -3,8 +3,8 @@ from discord.ext import commands, tasks
 import json
 from datetime import datetime, timedelta
 from cogs.SelectStatistics import SelectStatistic
-#server id 
-#218510314835148802
+import configparser
+import os
 
 class EditView(commands.Cog):
 
@@ -52,7 +52,36 @@ class EditView(commands.Cog):
     # async def on_ready(self):
         
 
+class FileOperations(commands.Cog):
+
+    def __init__(self, bot):
+        self.bot = bot
+
+    #read config data
+    @staticmethod
+    def read_config():
+        config = configparser.ConfigParser()
+        config_path = os.path.join(os.path.dirname(__file__), '..', 'config', 'config.ini')
+        config.read(config_path)
+        return config['Settings']
+    
+    #read guiild id from config
+    @staticmethod
+    def select_guild_id():
+        config = FileOperations.read_config()
+        return int(config['guild_id'])
+
+
+    @staticmethod
+    def select_server_token():
+        config = FileOperations.read_config()
+        return config['server_token']
+
+
+
+
 
 
 async def setup(bot):
     await bot.add_cog(EditView(bot))
+    await bot.add_cog(FileOperations(bot))

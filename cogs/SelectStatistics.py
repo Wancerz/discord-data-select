@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 class SelectStatistic(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.guild_id = 218510314835148802 
+        # self.guild_id = 218510314835148802 
    
     #returns count of active users at server
     @staticmethod 
