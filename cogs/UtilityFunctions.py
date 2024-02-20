@@ -71,14 +71,36 @@ class FileOperations(commands.Cog):
         config = FileOperations.read_config()
         return int(config['guild_id'])
 
-
+    #read TOKEN from config
     @staticmethod
     def select_server_token():
         config = FileOperations.read_config()
         return config['server_token']
+    
+    #read timezone from config
+    @staticmethod
+    def select_server_timezone():
+        config = FileOperations.read_config()
+        return config['timezone']
 
+    #read json file by name
+    @staticmethod
+    def read_json(filename):
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'json-exports', filename)
 
-
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+        except FileNotFoundError:
+            data = {}
+        return data
+    
+    #save json file
+    @staticmethod
+    def write_json(filename,data):
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'json-exports', filename)
+        with open(file_path, 'w') as file:
+            json.dump(data, file, indent=4)
 
 
 
