@@ -1,12 +1,14 @@
 from discord.ext import commands, tasks
 from cogs.SelectStatistics import SelectStatistic
 from cogs.UtilityFunctions import EditView,FileOperations
+from cogs.Events import Events
 from discord import app_commands
 import discord
 import os
 import json
 import datetime
 import pytz
+
 
 timezone = pytz.timezone(FileOperations.select_server_timezone())
 time = datetime.time(hour=23, minute=55,tzinfo=timezone)
@@ -29,14 +31,34 @@ class LoopTasks(commands.Cog):
 
 
     #TO DO export users info to json
-    @tasks.loop(seconds=60)
+    @tasks.loop(seconds=10)
     async def members_info_json_export(self):
-        members_info = SelectStatistic.select_members_info(self.bot,self.guild_id)
+        try:
+             
+            json_data = FileOperations.read_json("members_info.json")
+            members_info = await SelectStatistic.select_members_info(self.bot, self.guild_id)
+            
+            #if not json, create it
+            if not json_data:
+                json_data = {}
+            
+            #loop every active member
+            for member_id, member_data in members_info.items():
+                
+                #if member in json, add time else create member
+                if json_data.get(str(member_id)) != None:    
+                    json_data[str(member_id)]['time'] += 10
+                else:
+                    json_data[member_id] = {'name': member_data['name'], 'time': 10}
 
+            FileOperations.write_json("members_info.json", json_data)
+
+        except Exception as e:
+            print(e)
 
 
     #save json with number of active members
-    @tasks.loop(minutes=60)
+    @tasks.loop(minutes=1)
     async def member_count_json(self):
         try:
             print("START member_count_json")
@@ -48,26 +70,12 @@ class LoopTasks(commands.Cog):
         except Exception as e:
             print(e)
 
-        # json_data = json.dumps(json_data, indent=2)
-        # cog_dir = os.path.dirname(os.path.realpath(__file__))
-        # output_file_path = os.path.join(cog_dir, '..', 'json-exports', 'output.json')
-        # output_path = os.path.join(os.path.dirname(__file__), '..', 'json-exports', 'members_count.json')
-
-        # with open(output_path, 'w') as file:
-            # file.write(json_data)
-
-        
-
-
-
-
-
-
-
     @commands.Cog.listener()
     async def on_ready(self):
         self.member_count_json.start()
         self.messages_count_json_export.start()
+        self.members_info_json_export.start()
+        self.test.start()
 
 
 async def setup(bot):

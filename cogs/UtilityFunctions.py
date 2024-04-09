@@ -100,7 +100,7 @@ class FileOperations(commands.Cog):
     def write_json(filename,data):
         file_path = os.path.join(os.path.dirname(__file__), '..', 'json-exports', filename)
         with open(file_path, 'w') as file:
-            json.dump(data, file, indent=4)
+            json.dump(data, file, indent=4,default=str)
 
 
 

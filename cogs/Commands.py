@@ -47,15 +47,10 @@ class Commands(commands.Cog):
             await ctx.send(embed=result)
             # await ctx.send(f"Informacje o aktywnych uzytkownikach:\n {result}")
 
-
-
     @commands.command(name="sync")
     async def sync(self,ctx):
         synced = await self.bot.tree.sync()
         await ctx.send(f"Synced {len(synced)} command(s).")
-
-
-
 
 
 async def setup(bot):
