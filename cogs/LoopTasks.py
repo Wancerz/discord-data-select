@@ -11,21 +11,41 @@ import pytz
 
 
 timezone = pytz.timezone(FileOperations.select_server_timezone())
-time = datetime.time(hour=23, minute=55,tzinfo=timezone)
+local_tz = datetime.datetime.now().astimezone().tzinfo
+
+time = datetime.time(hour=23, minute=59,second=50,tzinfo=local_tz)
+
+# time_reset = time = datetime.time(hour=11, minute=4,tzinfo=timezone)
+
+
 
 class LoopTasks(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.guild_id = FileOperations.select_guild_id()
 
-    #at 23.55 dumps count of messages to json file
-    @tasks.loop(time=time)
+    #every 30 m dumps count of messages to json file
+    @tasks.loop(minutes=30)
     async def messages_count_json_export(self):
         try:
             json_data = FileOperations.read_json("daily_info.json")
             message_count = await SelectStatistic.select_message_count(self.bot,self.guild_id)
             json_data['messages_count'] = message_count
             FileOperations.write_json("daily_info.json",json_data)
+        except Exception as e:
+            print(e)
+
+    #at 23.59.50 reset users timers
+    @tasks.loop(time=time) 
+    async def reset_members_time(self):
+        try:
+            
+            json_data = FileOperations.read_json("members_info.json")
+            print(json_data)
+            for member_id, member_data in json_data.items():
+                if member_data['time'] != None:
+                    member_data['time'] = 0
+            FileOperations.write_json("members_info.json", json_data)
         except Exception as e:
             print(e)
 
@@ -61,12 +81,12 @@ class LoopTasks(commands.Cog):
     @tasks.loop(minutes=1)
     async def member_count_json(self):
         try:
-            print("START member_count_json")
+            
             json_data = FileOperations.read_json("daily_info.json")
             
             json_data['members_count'] = await SelectStatistic.select_members_count(self.bot,self.guild_id)
             FileOperations.write_json("daily_info.json",json_data)
-            print("STOP member_count_json")
+            
         except Exception as e:
             print(e)
 
@@ -75,7 +95,8 @@ class LoopTasks(commands.Cog):
         self.member_count_json.start()
         self.messages_count_json_export.start()
         self.members_info_json_export.start()
-        self.test.start()
+        self.reset_members_time.start()
+        
 
 
 async def setup(bot):

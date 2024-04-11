@@ -9,7 +9,7 @@ intents.message_content = True
 # TOKEN = os.environ.get('TOKEN')
 TOKEN = FileOperations.select_server_token()
 
-print(TOKEN)
+
 
 
 bot = commands.Bot(command_prefix='!', intents=intents)
